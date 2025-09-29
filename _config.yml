@@ -1,0 +1,11 @@
+title: PrynAI Research
+description: Daily technical notes on AI Agents , LangChain, LangGraph, Azure, and Langsmith and Sustainability
+url: https://prynai.github.io
+baseurl: ""
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+# optional nav
+header_pages:
+  - about.md
