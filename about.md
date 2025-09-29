@@ -4,4 +4,5 @@ title: About
 permalink: /about/
 ---
 
-What PrynAI is building. Links to repos and demos.
+PrynAI builds decision intelligence for sustainability using LangChain, Langgraph, Python, Azure , prynai-MCP
+Repos: https://github.com/PrynAI
