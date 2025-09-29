@@ -2,14 +2,18 @@
 layout: post
 title: "Hello, PrynAI — why this blog"
 date: 2025-09-29 11:00:00 +0100
-categories: research
-tags: langgraph mcp azure
+categories: research , Product Development
+tags: langchain , langgraph mcp azure
 ---
 
-**Problem:** one or two lines.
+**Purpose.** Document daily technical findings from PrynAI workstreams.
 
-**Approach:** bullet the stack and method.
+**Stack.** LangGraph agents, Azure , MCP , RAG, PromptEngineering , Context Engineering
 
-**Result:** link to repo, a chart or snippet.
+**Today’s note.** Outline posting workflow, repo links, and next steps.
 
-**Next:** what you will measure or build tomorrow.
+**Links.**
+- Org: https://github.com/PrynAI
+- Site: https://prynai.github.io
+
+**Next.** Ship a short post on building self hosted MCP Server
