@@ -15,5 +15,3 @@ tags: langchain , langgraph mcp azure
 **Links.**
 - Org: https://github.com/PrynAI
 - Site: https://prynai.github.io
-
-**Next.** Ship a short post on building self hosted MCP Server
