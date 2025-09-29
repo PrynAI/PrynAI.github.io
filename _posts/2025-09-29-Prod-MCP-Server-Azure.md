@@ -6,11 +6,11 @@ categories: Research, Product Development
 tags: mcp, azure, container-apps, entra-id, langchain, langgraph
 ---
 
-## In this post I’ll show how to secure and ship a Model Context Protocol (MCP) server on Azure Container Apps (ACA) using Azure Entra ID (OAuth2 client-credentials)—and how to iterate safely (add tools, redeploy, test, and promote) without breaking production.
+#### In this post I’ll show how to secure and ship a Model Context Protocol (MCP) server on Azure Container Apps (ACA) using Azure Entra ID (OAuth2 client-credentials)—and how to iterate safely (add tools, redeploy, test, and promote) without breaking production.
 
-### Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-MCP
+ Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-MCP
 
-## What you’ll build
+### What you’ll build
 
 - A self-hosted MCP server behind Azure Entra ID (Bearer JWT required)
 
@@ -20,7 +20,7 @@ tags: mcp, azure, container-apps, entra-id, langchain, langgraph
 
 - A repeatable update flow (modify server.py → build → new revision → smoke test → promote)
 
-## Prereqs
+### Prereqs
 
 - Azure subscription + Owner/Contributor to a resource group
 
@@ -37,11 +37,11 @@ cd PrynAI-MCP
 ```
 
 
-## 1) Secure the MCP with Entra ID (client-credentials)
+### 1) Secure the MCP with Entra ID (client-credentials)
 
-### We use two app registrations:
+- We use two app registrations:
 
-### Server API (exposed resource)
+- Server API (exposed resource)
 
 - Register app: e.g., PrynAI-MCP-Server
 
@@ -93,7 +93,7 @@ token = app.acquire_token_for_client([f"{SERVER_APP_ID_URI}/.default"])["access_
 # Then call MCP with: Authorization: Bearer <token>
 ```
 
-## 2) Provision Azure (once)
+### 2) Provision Azure (once)
 
 My deployed names (replace if you differ):
 
@@ -109,14 +109,14 @@ My deployed names (replace if you differ):
 
 You can create these with CLI or the portal. The repo includes infra scripts; for first setup you likely used your own flow. The steps below focus on updates.
 
-## 3) First deploy (or update) via ACR remote build
+### 3) First deploy (or update) via ACR remote build
 
 This project ships a remote build + rolling update script:
 ```
 infra/azure/deploy_update.ps1
 ```
 
-What it does:
+#### What it does:
 
 - Builds the container in ACR (no local Docker)
 
@@ -148,7 +148,7 @@ az containerapp ingress traffic set -g prynai-mcp-rg -n prynai-mcp --revision-we
 
 ✅ Best practice: ACA multiple revisions let you test the new pod at its own FQDN. Only switch traffic once smoke tests pass.
 
-## 4) Add/modify tools in server.py
+### 4) Add/modify tools in server.py
 
 - The MCP server exposes tools via MCP protocol.
 
@@ -156,7 +156,7 @@ az containerapp ingress traffic set -g prynai-mcp-rg -n prynai-mcp --revision-we
 
 - ### Example:
 
-- ### server.py (snippets)
+- #### server.py (snippets)
 ```
 # Simple sync tool
 def add(a: int, b: int) -> str:
@@ -175,7 +175,7 @@ server.add_tool("echo", echo, schema={"text": str})
 
 - Ensure each tool has a clear schema (names/types) and concise docstring. Downstream agents infer how to call it from these.
 
-## 5) Redeploy safely (new tools)
+### 5) Redeploy safely (new tools)
 
 - Commit your server.py changes
 
@@ -202,7 +202,7 @@ uv run python .\examples\use_core_list_tools.py
 - The primary FQDN remains stable, e.g.:
 https://prynai-mcp.purplegrass-10f29d71.eastus.azurecontainerapps.io/mcp
 
-## 6) Test from agents (optional)
+### 6) Test from agents (optional)
 
 ### The repo includes:
 
@@ -214,7 +214,7 @@ https://prynai-mcp.purplegrass-10f29d71.eastus.azurecontainerapps.io/mcp
 
 - All authenticate with Entra ID and use Authorization: Bearer <token>.
 
-## 7) Troubleshooting
+### 7) Troubleshooting
 
 - 401: Ensure the client token is issued for SERVER_APP_ID_URI and you used scope = f"{SERVER_APP_ID_URI}/.default". Admin consent must be granted to the client app for the server app role.
 
@@ -224,7 +224,7 @@ https://prynai-mcp.purplegrass-10f29d71.eastus.azurecontainerapps.io/mcp
 
 - LangChain tool wrapper: When auto-wrapping MCP tools, make sure each generated function has a docstring; LangChain uses it as the tool description.
 
-## Why this approach
+### Why this approach
 
 - Security: Entra ID + app roles keeps tools behind enterprise auth.
 
@@ -232,8 +232,8 @@ https://prynai-mcp.purplegrass-10f29d71.eastus.azurecontainerapps.io/mcp
 
 - Dev velocity: Add tools in server.py, run one script, test, and go live—without stopping production.
 
-## Get the code
+### Get the code
 
 - Server, examples, infra: https://github.com/PrynAI/PrynAI-MCP
 
-## If you ship your own org tools behind MCP, tag me—I’d love to see it.
+#### If you ship your own org tools behind MCP, tag me—I’d love to see it.
