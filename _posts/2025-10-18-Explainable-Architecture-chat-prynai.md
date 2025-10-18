@@ -6,6 +6,10 @@ tags: Architecture, ADR, Azure, CIAM, SSE, LangGraph, OpenAI, C4
 mermaid: true
 ---
 
+#### In this post I’ll show-  Why we picked SSE, Entra External ID + MSAL, LangGraph memory, and OpenAI's Responses API—with the trade‑offs and diagrams you can reuse.
+
+Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
+
 **TL;DR**  
 - We needed an AI chat that streams in real time, remembers users, signs in with enterprise identity, and costs close to $0 when idle.  
 - The big calls: **SSE** for streaming, **Microsoft Entra External ID (CIAM) + MSAL** for sign‑in, **OpenAI Responses API + built‑in web search** for the agent, and **LangGraph Store (pgvector)** for long‑term memory. We document these as ADRs so anyone can reuse or challenge them.  
