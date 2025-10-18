@@ -1,5 +1,5 @@
 ---
-title: "How PrynAI Remembers: Long‑Term Memory with LangGraph Store"
+title: "Long‑Term Memory with LangGraph Store"
 date: 2025-10-16
 description: "A practical, code-backed walkthrough of how we add durable user & episodic memory to chat—retrieve before the turn, write after it."
 tags: langgraph, memory, vector, pgvector, openai, architecture
