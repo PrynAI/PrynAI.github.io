@@ -8,10 +8,11 @@ tags: langchain , langgraph mcp azure
 
 **Purpose.** Document daily technical findings from PrynAI workstreams.
 
-**Stack.** LangGraph agents, Azure , MCP , RAG, PromptEngineering , Context Engineering
+**Stack.** LangGraph agents, Azure , MCP , RAG, PromptEngineering , Context Engineering, FASTAPI, Chainlit , Python , JaveScript ,HTML , CSS
 
-**Today’s note.** Outline posting workflow, repo links, and next steps.
 
 **Links.**
 - Org: https://github.com/PrynAI
 - Site: https://prynai.github.io
+- LLM Chat RAG Application : https://github.com/PrynAI/PrynAI-chat
+- Self Hosted MCP Server : https://github.com/PrynAI/PrynAI-MCP
