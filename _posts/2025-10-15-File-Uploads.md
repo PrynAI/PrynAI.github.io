@@ -1,15 +1,16 @@
 ---
-title: "How PrynAI Handles File Uploads: From Bytes → Text → Useful Context (Safely)"
+title: "How caht-PrynAI Handles File Uploads: From Bytes → Text → Useful Context (Safely)"
 date: 2025-10-15
 description: "The exact pipeline we use to accept files, extract text (with optional OCR), and feed a compact 'attachments context' to the model—streamed end-to-end."
 tags: uploads, ocr, chainlit, fastapi, sse, security, llm
 ---
 
 **TL;DR**  
-- Users can drop up to **5 files** (≤ **10 MB** each). We read the bytes server‑side, extract text using pure‑Python parsers (PDF/Office/CSV/JSON/XML/code), optionally OCR images/PDFs, and build a compact **ATTACHMENTS CONTEXT** system message. No code is executed; audio/video are blocked. We stream the model’s response over SSE and log both user + assistant turns to the thread transcript.
----
+- Users can drop up to **5 files** (≤ **10 MB** each).
+- We read the bytes server‑side, extract text using pure‑Python parsers (PDF/Office/CSV/JSON/XML/code), optionally OCR images/PDFs, and build a compact **ATTACHMENTS CONTEXT** system message. No code is executed; audio/video are blocked.
+- We stream the model’s response over SSE and log both user + assistant turns to the thread transcript.
 
-## Why we built it this way
+### Why we built it this way
 
 Uploads are powerful but risky. We wanted three things at once:
 
@@ -21,7 +22,7 @@ So the gateway does strict type/size checks, extracts text server‑side (option
 
 ---
 
-## The happy path (one screen, no surprises)
+### The happy path (one screen, no surprises)
 
 **Browser → Chainlit UI → Gateway `/api/chat/stream_files` → LangGraph agent → SSE back to browser**
 
@@ -38,7 +39,7 @@ async with client.stream("POST", "/api/chat/stream_files", data=form, files=file
         else: await out.stream_token(data)
 ```
 - On the server, the gateway’s uploads router owns POST /api/chat/stream_files, authenticates the user, enforces limits, extracts text, builds ATTACHMENTS CONTEXT, and streams the model response using SSE.
-## Guardrails first: limits & filters
+### Guardrails first: limits & filters
 
 ### How many / how big
 
@@ -82,7 +83,7 @@ Blocked: .exe .dll .bin .dmg .iso .apk .msi .so → 415. We also block any audio
 
 #### This ensures OCR never balloons latency or cost on a giant scan dump; we only do as much as configured and only when necessary.
 
-## The secret sauce: ATTACHMENTS CONTEXT
+### The secret sauce: ATTACHMENTS CONTEXT
 
 - After extraction, we compose a compact system message:
 
@@ -104,13 +105,13 @@ Use only the content below for semantic understanding (no code execution).
 - Goal: keep context semantic and bounded, so the model stays fast and relevant.
 - We send this system message as the first message, followed by the user’s prompt, to the LangGraph agent.
 
-## Streaming & transcripts (end‑to‑end)
+### Streaming & transcripts (end‑to‑end)
 
 - We stream tokens over Server‑Sent Events (“text/event-stream”), building events correctly (data: lines, blank line terminator). That keeps proxies happy and the UI simple.
 - We run input moderation before invoking the agent, and best‑effort output moderation after the stream—if flagged, we emit a policy SSE event that the UI renders as a safety notice.
 - We write transcripts: the user turn (prompt) right away, and the assistant turn (joined tokens) at the end—scoped to the current thread and user.
 
-## Security posture (in one paragraph)
+### Security posture (in one paragraph)
 
 - We accept only a known set of extensions and block audio/video to avoid surprise workloads.
 - We never execute uploaded content; we extract text only.
@@ -119,7 +120,7 @@ Use only the content below for semantic understanding (no code execution).
 - That’s the boring, dependable security you want around file uploads.
 
 
-## How to reuse this pattern
+### How to reuse this pattern
 
 - Turn on uploads in your UI, but enforce limits on the server. Use chunked reads and return 413/415 meaningfully.
 - Extract text with pure‑Python parsers; only OCR when you must (and cap it).
@@ -127,7 +128,7 @@ Use only the content below for semantic understanding (no code execution).
 - Stream the response over SSE and show safety notices inline. The UX feels instant and stays simple to debug.
 - Log transcripts (user + assistant) per thread so conversations are durable and auditable
 
- ## Code hotspots (for the curious)
+ ### Code hotspots (for the curious)
 
 #### Gateway uploads router
 -  /api/chat/stream_files (limits, extractors, OCR, context, SSE streaming).
