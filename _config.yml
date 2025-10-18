@@ -1,15 +1,23 @@
 title: PrynAI Research
-description: Daily technical notes on AI Agents , LangChain, LangGraph, Azure, and Langsmith and Sustainability
-url: https://prynai.github.io
-baseurl: ""
+description: Daily technical notes on AI Agents, LangChain, LangGraph, Azure, Langsmith, and Sustainability
+url: "https://prynai.github.io"
+baseurl: ""   # keep empty for user.github.io sites
+
 remote_theme: jekyll/minima
-plugins:
-  - jekyll-remote-theme
+
 minima:
   skin: dark   # or: auto
+
 plugins:
+  - jekyll-remote-theme
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true
+
 # optional nav
 header_pages:
   - about.md
