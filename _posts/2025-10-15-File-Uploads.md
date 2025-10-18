@@ -1,5 +1,5 @@
 ---
-title: "How chat-PrynAI Handles File Uploads: From Bytes → Text → Useful Context (Safely)"
+title: "File Uploads: From Bytes → Text → Useful Context (Safely)"
 date: 2025-10-15
 description: "The exact pipeline we use to accept files, extract text (with optional OCR), and feed a compact 'attachments context' to the model—streamed end-to-end."
 tags: uploads, ocr, chainlit, fastapi, sse, security, llm
