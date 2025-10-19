@@ -64,15 +64,16 @@ flowchart LR
 HTML Living Standard
 - WebSockets — full duplex, more control but trickier through some corporate proxies/load balancers.
 - Polling — simple but wasteful and jittery UX.
+
 #### Decision.
 - SSE. The event format is standardised, widely supported, and trivial to implement on both ends
 
-  ```
-  def sse_event(text: str) -> bytes:
+```
+def sse_event(text: str) -> bytes:
     t = text.replace("\r\n", "\n").replace("\r", "\n")
     payload = "data: " + t.replace("\n", "\ndata: ")
     return (payload + "\n\n").encode("utf-8")  # per spec
-  ```
+```
 
 #### Trade‑off table
 
