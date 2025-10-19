@@ -22,7 +22,7 @@ We wanted the assistant to remember stable preferences (“prefers terse answers
 - Keep context **small and relevant**.  
 - Avoid bespoke vector plumbing; use the platform store.
 
-So we split memory into **user** and **episodic**, perform a quick semantic search before generation, and save compact memories after generation. The code lives in `my_agent/features/lt_memory.py` and is wired into the chat graph in `my_agent/graphs/chat.py`. :contentReference[oaicite:2]{index=2}:contentReference[oaicite:3]{index=3}
+So we split memory into **user** and **episodic**, perform a quick semantic search before generation, and save compact memories after generation. The code lives in `my_agent/features/lt_memory.py` and is wired into the chat graph in `my_agent/graphs/chat.py`. 
 
 ---
 
@@ -36,7 +36,7 @@ We store memories in LangGraph Store with clear namespaces:
 - **Episodic** memory (one‑line summaries of past exchanges):  
   `("users", <user_id>, "memories", "episodic")` :contentReference[oaicite:5]{index=5}
 
-Each item records text, type, `source_thread`, and timestamp; we index by `"text"` for search. The store itself has a vector **index** declared in `langgraph.json` using `openai:text-embedding-3-small` (dims **1536**) across the `"$"` field, which enables semantic retrieval. :contentReference[oaicite:6]{index=6}
+Each item records text, type, `source_thread`, and timestamp; we index by `"text"` for search. The store itself has a vector **index** declared in `langgraph.json` using `openai:text-embedding-3-small` (dims **1536**) across the `"$"` field, which enables semantic retrieval. 
 
 ---
 
