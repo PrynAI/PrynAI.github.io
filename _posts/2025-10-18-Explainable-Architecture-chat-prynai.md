@@ -22,7 +22,7 @@ Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
 - The UI must **stream** tokens as they’re generated.
 - The assistant should **remember** durable facts and past episodes without us building a bespoke vector stack.
 
-## System at a glance (C4 “Containers”)
+## System at a glance (C4 "Containers")
 
 ```mermaid
 flowchart LR
