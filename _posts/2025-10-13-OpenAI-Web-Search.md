@@ -1,9 +1,10 @@
 ---
-title: "Fresh Answers on Demand: How PrynAI Uses OpenAI Web Search"
+title: "Fresh Answers on Demand: How chat-PrynAI Uses OpenAI Web Search"
 date: 2025-10-18
 description: "A code-backed walkthrough of our Web Search feature—from the UI toggle to the agent that (optionally) forces a single search call per turn."
 tags: openai, web-search, responses-api, chainlit, langgraph, sse
 ---
+Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
 
 **TL;DR**  
 - We added a **Web search** toggle to chat settings. When it's ON, the agent uses the **OpenAI built‑in `web_search` tool** and we **force exactly one call** to it per turn.
