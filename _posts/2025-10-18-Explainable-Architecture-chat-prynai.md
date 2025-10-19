@@ -1,5 +1,5 @@
 ---
-title: "Explainable Architecture: The Decisions That Built PrynAI"
+title: "Explainable Architecture: The Decisions That Built chat-PrynAI"
 date: 2025-10-18
 description: "Why we picked SSE, Entra External ID + MSAL, LangGraph memory, and OpenAI's Responses API—with the trade‑offs and diagrams you can reuse."
 tags: Architecture, ADR, Azure, CIAM, SSE, LangGraph, OpenAI, C4
