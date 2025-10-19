@@ -6,6 +6,8 @@ tags: langgraph, memory, vector, pgvector, openai, architecture
 mermaid: true
 ---
 
+Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
+
 **TL;DR**  
 - We keep two kinds of long‑term memory—**user** (durable facts/preferences) and **episodic** (one‑line summaries of past turns).  
 - On every user message we **retrieve** relevant memories to give the model context; after the model replies we **write** new memories.  
