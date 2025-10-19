@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ page.title | default: site.title }}</title>
   <meta name="description" content="{{ page.description | default: site.description }}">
   {{ site.head }}
 </head>
-
 <body>
   <header>
     <h1><a href="{{ "/" | relative_url }}">{{ site.title }}</a></h1>
@@ -15,7 +14,11 @@
       <nav>
         <ul>
           {% for page in site.header_pages %}
-            <li><a href="{{ page | relative_url }}">{{ page | split: '/' | last | replace: '.md','' | capitalize }}</a></li>
+            <li>
+              <a href="{{ page | relative_url }}">
+                {{ page | split: '/' | last | replace: '.md','' | capitalize }}
+              </a>
+            </li>
           {% endfor %}
         </ul>
       </nav>
@@ -30,33 +33,48 @@
     <p>&copy; {{ site.time | date: "%Y" }} {{ site.title }}</p>
   </footer>
 
-  <!-- Mermaid.js -->
-  <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Find common Mermaid fenced outputs from Rouge/kramdown/GitHub Pages
-      const blocks = document.querySelectorAll(
-        'pre code.language-mermaid, pre.mermaid code, div.highlight pre.mermaid code, div.highlight pre code.language-mermaid'
-      );
+  {%- assign wants_mermaid = page.mermaid | default: site.mermaid | default: false -%}
+  {% if wants_mermaid %}
+    <!-- Mermaid (v10; non-module build is simplest on GitHub Pages) -->
+    <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!window.mermaid) return;
 
-      blocks.forEach(code => {
-        const pre = code.closest('pre');
-        const div = document.createElement('div');
-        div.className = 'mermaid';
-        div.textContent = code.textContent;
-        pre.replaceWith(div);
+        // Convert common fenced outputs into <div class="mermaid"> blocks.
+        // Kramdown/Rouge typically emits: <div class="highlight"><pre><code class="language-mermaid">…</code></pre></div>
+        var selectors = [
+          'pre > code.language-mermaid',
+          'pre > code.mermaid',
+          'div.highlight pre > code.language-mermaid',
+          'div.highlight pre > code.mermaid'
+        ];
+        var codeBlocks = document.querySelectorAll(selectors.join(', '));
+        codeBlocks.forEach(function (code) {
+          var pre = code.closest('pre') || code.parentElement;
+          if (!pre) return;
+          var div = document.createElement('div');
+          div.className = 'mermaid';
+          // Use textContent so Mermaid receives the raw graph text (no HTML entities)
+          div.textContent = code.textContent;
+          // Replace the entire <pre>…</pre> with a Mermaid container
+          pre.replaceWith(div);
+        });
+
+        // Theme based on OS preference
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Initialize Mermaid (defer actual rendering to run())
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: prefersDark ? 'dark' : 'default'
+        });
+
+        // Render all .mermaid blocks (including any written directly as <div class="mermaid">)
+        mermaid.run({ querySelector: '.mermaid' });
       });
-
-      // Match Mermaid theme to system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: prefersDark ? 'dark' : 'default'
-      });
-
-      // Render after conversion
-      mermaid.run();
-    });
-  </script>
+    </script>
+  {% endif %}
 </body>
 </html>
