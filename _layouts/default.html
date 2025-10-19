@@ -35,43 +35,52 @@
 
   {%- assign wants_mermaid = page.mermaid | default: site.mermaid | default: false -%}
   {% if wants_mermaid %}
-    <!-- Mermaid (v10; non-module build is simplest on GitHub Pages) -->
+    <!-- Load Mermaid (non-module build = simplest on GitHub Pages) -->
     <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         if (!window.mermaid) return;
 
-        // Convert common fenced outputs into <div class="mermaid"> blocks.
-        // Kramdown/Rouge typically emits: <div class="highlight"><pre><code class="language-mermaid">…</code></pre></div>
+        // Normalizes “smart” punctuation back to plain ASCII so Mermaid can parse.
+        function normalizeSmartPunctuation(s) {
+          return (s || "")
+            .replace(/[\u2018\u2019]/g, "'")   // ‘ ’ -> '
+            .replace(/[\u201C\u201D]/g, '"')   // “ ” -> "
+            .replace(/[\u2013\u2014]/g, '-')   // – — -> -
+            .replace(/\u00A0/g, ' ');          // &nbsp; -> space
+        }
+
+        // 1) Convert fenced code blocks to <div class="mermaid"> for rendering.
         var selectors = [
           'pre > code.language-mermaid',
           'pre > code.mermaid',
           'div.highlight pre > code.language-mermaid',
           'div.highlight pre > code.mermaid'
         ];
-        var codeBlocks = document.querySelectorAll(selectors.join(', '));
-        codeBlocks.forEach(function (code) {
+        var nodes = document.querySelectorAll(selectors.join(', '));
+
+        nodes.forEach(function (code) {
           var pre = code.closest('pre') || code.parentElement;
           if (!pre) return;
           var div = document.createElement('div');
           div.className = 'mermaid';
-          // Use textContent so Mermaid receives the raw graph text (no HTML entities)
-          div.textContent = code.textContent;
-          // Replace the entire <pre>…</pre> with a Mermaid container
+          // Use textContent to get raw text; then normalize punctuation.
+          div.textContent = normalizeSmartPunctuation(code.textContent);
           pre.replaceWith(div);
         });
 
-        // Theme based on OS preference
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // 2) Also normalize any existing <div class="mermaid"> blocks.
+        document.querySelectorAll('div.mermaid').forEach(function (el) {
+          el.textContent = normalizeSmartPunctuation(el.textContent);
+        });
 
-        // Initialize Mermaid (defer actual rendering to run())
+        // 3) Initialize & render.
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         mermaid.initialize({
           startOnLoad: false,
           securityLevel: 'strict',
           theme: prefersDark ? 'dark' : 'default'
         });
-
-        // Render all .mermaid blocks (including any written directly as <div class="mermaid">)
         mermaid.run({ querySelector: '.mermaid' });
       });
     </script>
