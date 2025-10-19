@@ -164,7 +164,7 @@ const account = result?.account || msalInstance.getAllAccounts()[0];
  
 ## Sequence: auth + chat streaming
 
-<div class="mermaid">
+```mermaid
 sequenceDiagram
   participant U as "Browser (MSAL + Chainlit)"
   participant ENTRA as "Entra External ID"
@@ -185,7 +185,7 @@ sequenceDiagram
   LG-->>GW: "token chunks"
   GW->>ST: "append transcript (assistant)"
   GW-->>U: "text/event-stream (data: ...\n)\n\n"
-</div>
+```
 
 - SSE is a standard EventSource API with a simple wire format; MDN and the WHATWG HTML standard document both.
 - MSAL redirect flows must await handleRedirectPromise() on each load; this avoids race conditions.
