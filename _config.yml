@@ -17,7 +17,3 @@ plugins:
 relative_links:
   enabled: true
   collections: true
-
-# optional nav
-header_pages:
-  - about.md
