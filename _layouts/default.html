@@ -35,14 +35,11 @@
 
   {%- assign wants_mermaid = page.mermaid | default: site.mermaid | default: false -%}
   {% if wants_mermaid %}
-    <!-- Load Mermaid (non-module build = simplest on GitHub Pages) -->
+    <!-- Mermaid v10 (non-module build works on GitHub Pages) -->
     <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        if (!window.mermaid) return;
-
-        // Normalizes “smart” punctuation back to plain ASCII so Mermaid can parse.
-        function normalizeSmartPunctuation(s) {
+      (function () {
+        function normalizeSmart(s) {
           return (s || "")
             .replace(/[\u2018\u2019]/g, "'")   // ‘ ’ -> '
             .replace(/[\u201C\u201D]/g, '"')   // “ ” -> "
@@ -50,39 +47,48 @@
             .replace(/\u00A0/g, ' ');          // &nbsp; -> space
         }
 
-        // 1) Convert fenced code blocks to <div class="mermaid"> for rendering.
-        var selectors = [
-          'pre > code.language-mermaid',
-          'pre > code.mermaid',
-          'div.highlight pre > code.language-mermaid',
-          'div.highlight pre > code.mermaid'
-        ];
-        var nodes = document.querySelectorAll(selectors.join(', '));
+        function renderMermaid() {
+          if (!window.mermaid) return;
 
-        nodes.forEach(function (code) {
-          var pre = code.closest('pre') || code.parentElement;
-          if (!pre) return;
-          var div = document.createElement('div');
-          div.className = 'mermaid';
-          // Use textContent to get raw text; then normalize punctuation.
-          div.textContent = normalizeSmartPunctuation(code.textContent);
-          pre.replaceWith(div);
-        });
+          // 1) CLEAN & MARK: wrappers produced by Jekyll/Rouge (div.language-mermaid ...)
+          document.querySelectorAll('div.language-mermaid').forEach(function (el) {
+            el.textContent = normalizeSmart(el.textContent); // strip inner <pre><code> wrapper to plain text
+            el.classList.add('mermaid');                     // so Mermaid will render it
+          });
 
-        // 2) Also normalize any existing <div class="mermaid"> blocks.
-        document.querySelectorAll('div.mermaid').forEach(function (el) {
-          el.textContent = normalizeSmartPunctuation(el.textContent);
-        });
+          // 2) CONVERT: fenced blocks that survive as <pre><code class="language-mermaid">...</code></pre>
+          var selectors = [
+            'pre > code.language-mermaid',
+            'pre > code.mermaid',
+            'div.highlight pre > code.language-mermaid',
+            'div.highlight pre > code.mermaid'
+          ];
+          document.querySelectorAll(selectors.join(', ')).forEach(function (code) {
+            var pre = code.closest('pre') || code.parentElement;
+            if (!pre) return;
+            var div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = normalizeSmart(code.textContent);
+            pre.replaceWith(div);
+          });
 
-        // 3) Initialize & render.
-        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        mermaid.initialize({
-          startOnLoad: false,
-          securityLevel: 'strict',
-          theme: prefersDark ? 'dark' : 'default'
-        });
-        mermaid.run({ querySelector: '.mermaid' });
-      });
+          // 3) INIT & RUN
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          mermaid.initialize({
+            startOnLoad: false,                 // we call run() ourselves
+            securityLevel: 'strict',
+            theme: prefersDark ? 'dark' : 'default'
+          });
+          // Render both .mermaid and any remaining .language-mermaid (after step 1 above)
+          mermaid.run({ querySelector: '.mermaid, .language-mermaid' }); // v10 API
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', renderMermaid);
+        } else {
+          renderMermaid();
+        }
+      })();
     </script>
   {% endif %}
 </body>
