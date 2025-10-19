@@ -23,7 +23,6 @@ Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
 
 ## System at a glance (C4 “Containers”)
 
-```mermaid
 flowchart LR
   subgraph Browser["Browser"]
     U["User\n(Chainlit UI + MSAL SPA)"]
@@ -31,20 +30,20 @@ flowchart LR
 
   U -- "MSAL redirect" --> ENTRA["Microsoft Entra External ID"]
   U -- "/chat (SSE client)" --> UI["ca-chainlit\nFastAPI + Chainlit"]
-  UI <---> ENTRA
+  UI <--> ENTRA
 
   UI -- "/ui/* proxy" --> GW["ca-gateway\nFastAPI API"]
   UI -- "/api/chat/stream(_files)" --> GW
 
   GW -- "RemoteGraph" --> LG["LangGraph Cloud\nGraph: chat"]
   LG <--> OAI["OpenAI Responses API\n(+ built-in web_search tool)"]
-  LG <--> STORE[("LangGraph Store\nPostgres + pgvector")]
+  LG <--> STORE["LangGraph Store\nPostgres + pgvector"]
 
   %% style definitions
   classDef svc fill:#2b90d9,stroke:#1b6fa8,stroke-width:1,color:#fff
   class UI,GW,LG,OAI,STORE svc
-```
 
+  
 ## ADRs (Architecture Decision Records)
 
 - Each ADR has Context → Options → Decision → Consequences. These are not dogma; they record our current best trade‑offs
