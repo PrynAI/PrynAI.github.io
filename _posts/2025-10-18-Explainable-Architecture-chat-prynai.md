@@ -153,17 +153,17 @@ const account = result?.account || msalInstance.getAllAccounts()[0];
 #### Decision.
 - Extract text server‑side (pure‑Python parsers; optional OCR for images/PDFs) and inject a compact “ATTACHMENTS CONTEXT” system message. We cap size/types and never execute content.
 
-- ### Consequence.
-  - Consistent TTFT, predictable tokens, safer surface.
+### Consequence.
+- Consistent TTFT, predictable tokens, safer surface.
  
-  ## ADR‑008 — Threads & transcripts: Gateway‑owned CRUD + per‑thread transcript
+## ADR‑008 — Threads & transcripts: Gateway‑owned CRUD + per‑thread transcript
 
-  #### Context
-  - Users expect continuity; we want stable URLs and auditability.
-  #### Decision
-  - A threads API (create/list/get/rename/delete) and a per‑thread transcript in Store. UI deep‑links via /open/t/{id} and keeps an active thread cookie.
-  ### Consequence
-  - Conversations are durable, shareable (internally), and searchable later
+#### Context
+- Users expect continuity; we want stable URLs and auditability.
+#### Decision
+- A threads API (create/list/get/rename/delete) and a per‑thread transcript in Store. UI deep‑links via /open/t/{id} and keeps an active thread cookie.
+#### Consequence
+- Conversations are durable, shareable (internally), and searchable later
  
 ## Sequence: auth + chat streaming
 
