@@ -24,6 +24,7 @@ Repo (server + clients + infra): https://github.com/PrynAI/PrynAI-chat/tree/main
 
 ## System at a glance (C4 “Containers”)
 
+```mermaid
 flowchart LR
   subgraph Browser["Browser"]
     U["User\n(Chainlit UI + MSAL SPA)"]
@@ -41,8 +42,9 @@ flowchart LR
   LG <--> STORE["LangGraph Store\nPostgres + pgvector"]
 
   %% style definitions
-  classDef svc fill:#2b90d9,stroke:#1b6fa8,stroke-width:1,color:#fff
-  class UI,GW,LG,OAI,STORE svc
+  classDef svc fill:#2b90d9,stroke:#1b6fa8,stroke-width:1,color:#fff;
+  class UI,GW,LG,OAI,STORE svc;
+```
 
   
 ## ADRs (Architecture Decision Records)
