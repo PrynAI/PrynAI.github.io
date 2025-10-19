@@ -1,76 +1,76 @@
 {%- assign wants_mermaid = page.mermaid | default: site.mermaid | default: false -%}
 {% if wants_mermaid %}
-<!-- Mermaid v10 (non-module build) -->
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script>
+  <!-- Mermaid v10 (non-module build) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
     (function () {
-        // Normalize curly quotes, en/em dashes and nbsp -> plain ASCII so Mermaid can parse.
-        function normalizeSmart(s) {
-            return (s || "")
-                .replace(/[\u2018\u2019]/g, "'")   // ‘ ’ -> '
-                .replace(/[\u201C\u201D]/g, '"')   // “ ” -> "
-                .replace(/[\u2013\u2014]/g, '-')   // – — -> -
-                .replace(/\u00A0/g, ' ');          // nbsp -> space
-        }
+      // Normalize curly quotes, en/em dashes and nbsp -> plain ASCII so Mermaid can parse.
+      function normalizeSmart(s) {
+        return (s || "")
+          .replace(/[\u2018\u2019]/g, "'")   // ‘ ’ -> '
+          .replace(/[\u201C\u201D]/g, '"')   // “ ” -> "
+          .replace(/[\u2013\u2014]/g, '-')   // – — -> -
+          .replace(/\u00A0/g, ' ');          // nbsp -> space
+      }
 
-        // Convert common Jekyll/Rouge wrappers into <div class="mermaid"> blocks Mermaid can render.
-        function convertFencedBlocks() {
-            // e.g. <div class="language-mermaid"><div class="highlight"><pre><code>...</code></pre></div></div>
-            document.querySelectorAll('div.language-mermaid').forEach(function (wrapper) {
-                // Get raw text (diagram source), normalize, then mark as mermaid.
-                wrapper.textContent = normalizeSmart(wrapper.textContent);
-                wrapper.classList.add('mermaid');
-            });
+      // Convert common Jekyll/Rouge wrappers into <div class="mermaid"> blocks Mermaid can render.
+      function convertFencedBlocks() {
+        // e.g. <div class="language-mermaid"><div class="highlight"><pre><code>...</code></pre></div></div>
+        document.querySelectorAll('div.language-mermaid').forEach(function (wrapper) {
+          // Get raw text (diagram source), normalize, then mark as mermaid.
+          wrapper.textContent = normalizeSmart(wrapper.textContent);
+          wrapper.classList.add('mermaid');
+        });
 
-            // e.g. <pre><code class="language-mermaid">...</code></pre>
-            var selectors = [
-                'pre > code.language-mermaid',
-                'pre > code.mermaid',
-                'div.highlight pre > code.language-mermaid',
-                'div.highlight pre > code.mermaid'
-            ];
-            document.querySelectorAll(selectors.join(', ')).forEach(function (code) {
-                var pre = code.closest('pre') || code.parentElement;
-                if (!pre) return;
-                var div = document.createElement('div');
-                div.className = 'mermaid';
-                div.textContent = normalizeSmart(code.textContent);
-                pre.replaceWith(div);
-            });
+        // e.g. <pre><code class="language-mermaid">...</code></pre>
+        var selectors = [
+          'pre > code.language-mermaid',
+          'pre > code.mermaid',
+          'div.highlight pre > code.language-mermaid',
+          'div.highlight pre > code.mermaid'
+        ];
+        document.querySelectorAll(selectors.join(', ')).forEach(function (code) {
+          var pre = code.closest('pre') || code.parentElement;
+          if (!pre) return;
+          var div = document.createElement('div');
+          div.className = 'mermaid';
+          div.textContent = normalizeSmart(code.textContent);
+          pre.replaceWith(div);
+        });
 
-            // If author wrote raw <div class="mermaid">…</div>, normalize its text too.
-            document.querySelectorAll('div.mermaid').forEach(function (el) {
-                el.textContent = normalizeSmart(el.textContent);
-            });
-        }
+        // If author wrote raw <div class="mermaid">…</div>, normalize its text too.
+        document.querySelectorAll('div.mermaid').forEach(function (el) {
+          el.textContent = normalizeSmart(el.textContent);
+        });
+      }
 
-        function render() {
-            if (!window.mermaid) return;
-            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      function render() {
+        if (!window.mermaid) return;
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-            // Initialize Mermaid v10; we call run() explicitly afterwards.
-            mermaid.initialize({
-                startOnLoad: false,
-                securityLevel: 'strict',  // safer defaults; see Mermaid config docs
-                theme: prefersDark ? 'dark' : 'default'
-            });
+        // Initialize Mermaid v10; we call run() explicitly afterwards.
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',  // safer defaults; see Mermaid config docs
+          theme: prefersDark ? 'dark' : 'default'
+        });
 
-            // Render all prepared blocks.
-            mermaid.run({ querySelector: '.mermaid' });
-        }
+        // Render all prepared blocks.
+        mermaid.run({ querySelector: '.mermaid' });
+      }
 
-        function kickoff() {
-            // Only run if there’s something to render
-            if (!document.querySelector('.language-mermaid, .mermaid, pre > code.language-mermaid, div.highlight pre > code.language-mermaid')) return;
-            convertFencedBlocks();
-            render();
-        }
+      function kickoff() {
+        // Only run if there’s something to render
+        if (!document.querySelector('.language-mermaid, .mermaid, pre > code.language-mermaid, div.highlight pre > code.language-mermaid')) return;
+        convertFencedBlocks();
+        render();
+      }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', kickoff);
-        } else {
-            kickoff();
-        }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', kickoff);
+      } else {
+        kickoff();
+      }
     })();
-</script>
+  </script>
 {% endif %}
